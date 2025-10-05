@@ -21,6 +21,7 @@ class AddQuoteView(View):
         addQuoteForm = QuoteForm(request.POST)
 
         if addQuoteForm.is_valid():
+            addQuoteForm.instance.board = get_object_or_404(Board, code=self.kwargs["code"])
             addQuoteForm.save()
             return HttpResponse(status=204)
         else:
