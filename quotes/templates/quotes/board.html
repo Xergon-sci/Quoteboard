@@ -25,9 +25,7 @@
   <div class="row mt-3">
     <div class="col">
       <h1>{{ board.name }}</h1>
-      {% for b in board.quotes.all %}
-      <p>{{ b.text }}</p>
-      {% endfor %}
+      <div hx-trigger="load, quoteListChanged from:body" hx-get="{% url 'load-quotes' board.code %}" hx-target="this"></div>
     </div>
   </div>
 </div>

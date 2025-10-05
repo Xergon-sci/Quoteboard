@@ -23,9 +23,15 @@ class AddQuoteView(View):
         if addQuoteForm.is_valid():
             addQuoteForm.instance.board = get_object_or_404(Board, code=self.kwargs["code"])
             addQuoteForm.save()
-            return HttpResponse(status=204)
+            return HttpResponse(status=204, headers={"HX-Trigger": "quoteListChanged"})
         else:
             return render(request, "quotes/partials/addQuoteModal.html", {"form": addQuoteForm})
     
     def get(self, request, **kwargs):
         return render(request, "quotes/partials/addQuoteModal.html", {"form": QuoteForm()})
+
+class LoadQuotesView(View):
+
+    def get(self, request, **kwargs):
+        board = get_object_or_404(Board, code=self.kwargs["code"])
+        return render(request, "quotes/partials/quoteList.html", {"board": board})

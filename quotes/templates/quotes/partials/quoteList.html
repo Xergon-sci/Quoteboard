@@ -1,0 +1,3 @@
+{% for b in board.quotes.all %}
+<p>"{{ b.text }}" --{{ b.author }} {{ b.date }}</p>
+{% endfor %}
