@@ -7,7 +7,7 @@ class Board(models.Model):
     name = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField()
     date = models.DateField(auto_now_add=True, null=False)
-    pin = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)], blank=True, null=False)
+    pin = models.PositiveIntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)], blank=True, null=False)
 
     def save(self, *args, **kwargs):
         if not self.code:

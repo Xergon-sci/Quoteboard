@@ -125,6 +125,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Sessions
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 BOOTSTRAP5 = {
     'javascript_in_head': True,
 }

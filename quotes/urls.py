@@ -6,6 +6,7 @@ from . import views
 
 urlpatterns = [
     path("board/<str:code>/", views.BordView.as_view(), name="board_view"),
-    path("board/<str:code>/add-quote", views.AddQuoteView.as_view(), name="add-quote"),
-    path("board/<str:code>/load-quotes", views.LoadQuotesView.as_view(), name="load-quotes"),
+    path("board/<str:code>/add-quote/", views.AddQuoteView.as_view(), name="add-quote"),
+    path("board/<str:code>/load-quotes/", views.LoadQuotesView.as_view(), name="load-quotes"),
+    path("board/<str:code>/check-pin/", views.PinCheckView.as_view(), name="check-pin"),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

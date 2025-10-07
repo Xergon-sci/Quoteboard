@@ -6,17 +6,23 @@
 <div class="container text-center">
 
   <!-- Add quote button -->
-  <button
-    type="button"
-    class="btn btn-primary btn-lg rounded-circle position-absolute top-0 end-0 me-3 mt-3 d-flex align-items-center justify-content-center"
-    style="width: 3rem; height: 3rem;"
-    hx-get="{% url 'add-quote' board.code %}"
-    hx-target="#addQuoteDialog"
-  >
+  <button type="button"
+          class="btn btn-primary btn-lg rounded-circle position-absolute top-0 end-0 me-3 mt-3 d-flex align-items-center justify-content-center"
+          style="width: 3rem; height: 3rem;"
+          hx-get="{% url 'add-quote' board.code %}"
+          hx-target="#addQuoteDialog">
     <i class="bi bi-plus"></i>
   </button>
-  
-  <!-- AddQuoteModel Placeholder -->
+
+  <!-- PIN modal placeholder -->
+  <div id="pinCheck"
+       hx-get="{% url 'check-pin' board.code %}"
+       hx-trigger="load"
+       hx-target="body"
+       hx-swap="beforeend">
+  </div>
+
+  <!-- AddQuoteModal Placeholder -->
   <div id="addQuoteModal" class="modal fade" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div id="addQuoteDialog" class="modal-dialog modal-lg" hx-target="this"></div>
   </div>
@@ -25,7 +31,7 @@
   <div class="row mt-3">
     <div class="col">
       <h1>{{ board.name }}</h1>
-      <div hx-trigger="load, quoteListChanged from:body" hx-get="{% url 'load-quotes' board.code %}" hx-target="this"></div>
+      <div hx-trigger="quoteListChanged from:body" hx-get="{% url 'load-quotes' board.code %}" hx-target="this"></div>
     </div>
   </div>
 </div>
@@ -33,30 +39,39 @@
 
 {% block scripts %}
 <script>
+// Driver for the addQuote modal
+// ======================================================================
+const addQuoteModal = new bootstrap.Modal(document.getElementById("addQuoteModal"))
 
-    // Driver for the remove modal
-    // ======================================================================
-    const addQuoteModal = new bootstrap.Modal(document.getElementById("addQuoteModal"))
+htmx.on("htmx:afterSwap", (e) => {
+    // Response targeting #dialog => show the modal
+    if (e.detail.target.id == "addQuoteDialog") {
+        addQuoteModal.show()
+    }
+})
 
-    htmx.on("htmx:afterSwap", (e) => {
-        // Response targeting #dialog => show the modal
-        if (e.detail.target.id == "addQuoteDialog") {
-            addQuoteModal.show()
-        }
-    })
+htmx.on("htmx:beforeSwap", (e) => {
+    // Empty response targeting #dialog => hide the modal
+    if (e.detail.target.id == "addQuoteDialog" && !e.detail.xhr.response) {
+        addQuoteModal.hide()
+      e.detail.shouldSwap = false
+    }
+  })
 
-    htmx.on("htmx:beforeSwap", (e) => {
-        // Empty response targeting #dialog => hide the modal
-        if (e.detail.target.id == "addQuoteDialog" && !e.detail.xhr.response) {
-            addQuoteModal.hide()
-          e.detail.shouldSwap = false
-        }
-      })
+  // flush to prevent users to see old content in a fash
+  htmx.on("hidden.bs.modal", () => {
+    document.getElementById("addQuoteDialog").innerHTML = ""
+  })
+  // ======================================================================
 
-      // flush to prevent users to see old content in a fash
-      htmx.on("hidden.bs.modal", () => {
-        document.getElementById("addQuoteDialog").innerHTML = ""
-      })
-      // ======================================================================
+document.body.addEventListener("pinCorrect", function() {
+  const pinModal = document.getElementById("pinModal");
+  const modal = bootstrap.Modal.getInstance(pinModal);
+
+  if (modal) {
+      modal.hide();
+  }
+  htmx.trigger(document.body, "quoteListChanged");
+});
 </script>
 {% endblock %}
