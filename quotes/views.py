@@ -2,9 +2,10 @@ from django.views.generic import TemplateView
 from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.db.models.functions import Random
 from quotes.models import Board
 from quotes.forms import QuoteForm, PinForm
-import json
+import random
 
 class BordView(TemplateView):
     template_name = "quotes/board.html"
@@ -59,4 +60,47 @@ class LoadQuotesView(View):
 
     def get(self, request, **kwargs):
         board = get_object_or_404(Board, code=self.kwargs["code"])
-        return render(request, "quotes/partials/quoteList.html", {"board": board})
+
+        latest_quotes = board.quotes.all().order_by('-date')[:10]
+        exclude_ids = [q.id for q in latest_quotes]
+        random_quotes = list(board.quotes.exclude(id__in=exclude_ids).order_by(Random())[:40])
+
+        quotes = list(latest_quotes) + list(random_quotes)
+
+        FONTS = [
+            "Barrio",
+            "Bitter",
+            "Borel",
+            "Caveat",
+            "Coming Soon",
+            "Damion",
+            "Delicious Handrawn",
+            "Fontdiner Swanky",
+            "Gluten",
+            "Google Sans Code",
+            "Homemade Apple",
+            "Knewave",
+            "Leckerli One",
+            "Lily Script One",
+            "Montserrat",
+            "Mynerve",
+            "Oldenburg",
+            "Open Sans",
+            "Pacifico",
+            "Playwrite US Modern",
+            "Playwrite US Trad",
+            "Shadows Into Light Two",
+            "The Girl Next Door",
+            "Tilt Prism",
+            "Workbench",
+            "Yellowtail",
+        ]
+
+        for q in quotes:
+            q.font = random.choice(FONTS)
+
+        col1 = quotes[0::3]
+        col2 = quotes[1::3]
+        col3 = quotes[2::3]
+
+        return render(request, "quotes/partials/quoteList.html", {"board":  board, "col1": col1, "col2": col2, "col3": col3})

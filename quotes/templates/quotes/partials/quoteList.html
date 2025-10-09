@@ -1,3 +1,19 @@
-{% for b in board.quotes.all %}
-<p>"{{ b.text }}" --{{ b.author }} {{ b.date }}</p>
-{% endfor %}
+<div class="row">
+     <div class="col-md-4">
+    {% for q in col1 %}
+      <p style="font-family: '{{ q.font }}';">"{{ q.text }}"<br><small style="font-family: Montserrat;">— {{ q.author }}, {{ q.date }}</small></p>
+    {% endfor %}
+  </div>
+
+  <div class="col-md-4">
+    {% for q in col2 %}
+      <p style="font-family: '{{ q.font }}';">"{{ q.text }}"<br><small style="font-family: Montserrat;">— {{ q.author }}, {{ q.date }}</small></p>
+    {% endfor %}
+  </div>
+
+  <div class="col-md-4">
+    {% for q in col3 %}
+      <p style="font-family: '{{ q.font }}';">"{{ q.text }}"<br><small style="font-family: Montserrat;">— {{ q.author }}, {{ q.date }}</small></p>
+    {% endfor %}
+  </div>
+</div> 
