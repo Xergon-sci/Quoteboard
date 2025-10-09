@@ -66,6 +66,7 @@ class LoadQuotesView(View):
         random_quotes = list(board.quotes.exclude(id__in=exclude_ids).order_by(Random())[:40])
 
         quotes = list(latest_quotes) + list(random_quotes)
+        random.shuffle(quotes)
 
         FONTS = [
             "Barrio",
