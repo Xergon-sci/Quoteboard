@@ -39,6 +39,7 @@ tzdata = { version = ">=2025b,<2026a", build = "h78e105d_0" }
 
 [feature.production.dependencies]
 gunicorn = "*"
+psycopg2 = ">=2.9.10,<3"
 
 [environments]
 production = ["production"]

@@ -1,0 +1,46 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - quoteboard
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static:/app/static
+      - media:/app/media
+  quoteboard:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - SECRET_KEY=u#-wdw42xg(4=m3%drq346b-u3sw+05^grrt+0&#nvu$^3sps9
+      - DEBUG=False
+      - STATIC_URL=/static/
+      - STATIC_ROOT=/app/static
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=quoteboard
+      - POSTGRES_PORT=5432
+    depends_on:
+      - postgres
+    volumes:
+      - static:/app/static
+      - media:/app/media
+  postgres:
+    image: postgres:latest
+    container_name: quoteboard_db
+    environment:
+      POSTGRES_DB: quoteboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql
+volumes:
+  db_data:
+  static:
+  media:

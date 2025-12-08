@@ -1,0 +1,9 @@
+.vscode
+.git
+.gitignore
+__pycache__
+*.pyc
+*.sqlite3
+*.sqlite
+.env
+.pixi

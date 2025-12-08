@@ -2,7 +2,6 @@ FROM ghcr.io/prefix-dev/pixi:0.41.4 AS build
 
 WORKDIR /app
 COPY . .
-RUN rm -rf .pixi
 RUN pixi install --locked -e production
 RUN pixi shell-hook -e production -s bash > /shell-hook
 RUN echo "#!/bin/bash" > /app/entrypoint.sh
@@ -14,10 +13,11 @@ WORKDIR /app
 COPY --from=build /app/.pixi/envs/production /app/.pixi/envs/production
 COPY --from=build --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
 COPY ./quoteboard /app/quoteboard
+COPY --chmod=0755 ./start.sh /app/start.sh
+
+WORKDIR /app/quoteboard
 
 EXPOSE 8000
 ENTRYPOINT [ "/app/entrypoint.sh" ]
 
-WORKDIR /app/quoteboard
-
-CMD [ "gunicorn", "quoteboard.wsgi" ]
+CMD ["/app/start.sh"]
