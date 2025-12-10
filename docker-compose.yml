@@ -6,17 +6,17 @@ services:
     depends_on:
       - quoteboard
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static:/app/static
       - media:/app/media
   quoteboard:
     build: .
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       - ALLOWED_HOSTS=localhost,127.0.0.1
       - SECRET_KEY=u#-wdw42xg(4=m3%drq346b-u3sw+05^grrt+0&#nvu$^3sps9
-      - DEBUG=False
+      - DEBUG=True
       - STATIC_URL=/static/
       - STATIC_ROOT=/app/static
       - POSTGRES_HOST=postgres
@@ -36,8 +36,8 @@ services:
       POSTGRES_DB: quoteboard
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - db_data:/var/lib/postgresql
 volumes:
