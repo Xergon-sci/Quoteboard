@@ -1,0 +1,30 @@
+FROM ghcr.io/prefix-dev/pixi:0.61.0 AS build
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y wget unzip
+RUN wget -qO- https://github.com/Xergon-sci/Quoteboard/archive/refs/heads/main.zip  \
+    -O main.zip && \
+    unzip -q main.zip && \
+    mv Quoteboard-main/* . && \
+    rm -rf main.zip Quoteboard-main
+    
+RUN pixi install --locked -e production
+RUN pixi shell-hook -e production -s bash > /shell-hook
+RUN echo "#!/bin/bash" > /app/entrypoint.sh
+RUN cat /shell-hook >> /app/entrypoint.sh
+RUN echo 'exec "$@"' >> /app/entrypoint.sh
+
+FROM ubuntu:24.04 AS production
+WORKDIR /app
+COPY --from=build /app/.pixi/envs/production /app/.pixi/envs/production
+COPY --from=build --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
+COPY ./quoteboard /app/quoteboard
+COPY --chmod=0755 ./start.sh /app/start.sh
+
+WORKDIR /app/quoteboard
+
+EXPOSE 8000
+ENTRYPOINT [ "/app/entrypoint.sh" ]
+
+CMD ["/app/start.sh"]
