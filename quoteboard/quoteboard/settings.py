@@ -5,6 +5,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "localhost,127.0.0.1").split(",")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 SECRET_KEY = os.environ.get(
     "SECRET_KEY", "django-insecure-65n+g%-yi4(aavcr3w2kb+u!pd)l$22mhca=#*ku_o@s)qt$(y"
 )
